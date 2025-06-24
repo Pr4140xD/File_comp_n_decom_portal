@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Data Compression Portal" />
+    <title>Compression Portal</title>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        /* Enable vertical scrolling */
+        overflow-y: auto;
+      }
+      body {
+        /* Dark animated gradient: pink → purple → blue */
+        background: linear-gradient(120deg, #ff5e62 0%, #8f5be8 50%, #2b5876 100%);
+        background-size: 200% 200%;
+        animation: gradientMove 18s ease-in-out infinite;
+        min-height: 100vh;
+        position: relative;
+      }
+      @keyframes gradientMove {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+      #star-bg {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw;
+        height: 100vh;
+        pointer-events: none;
+        z-index: 0;
+        display: block;
+      }
+      #root {
+        position: relative;
+        z-index: 1;
+        background: transparent;
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <canvas id="star-bg"></canvas>
+    <script>
+      // Brighter, glowing animated stars background
+      const STAR_COUNT = 90;
+      const STAR_COLOR = "#fff";
+      const STAR_SIZE = 2.2;
+      const STAR_SPEED = 0.18;
+      let stars = [];
+
+      function resizeCanvas(canvas) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      function createStars(canvas) {
+        stars = [];
+        for (let i = 0; i < STAR_COUNT; i++) {
+          stars.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: STAR_SIZE + Math.random() * 1.2,
+            speed: STAR_SPEED + Math.random() * 0.25,
+            glow: 10 + Math.random() * 18
+          });
+        }
+      }
+
+      function animateStars(canvas, ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let star of stars) {
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.size, 0, 2 * Math.PI);
+          ctx.fillStyle = STAR_COLOR;
+          ctx.globalAlpha = 0.85 + Math.random() * 0.15;
+          ctx.shadowColor = "#fff6f6";
+          ctx.shadowBlur = star.glow;
+          ctx.fill();
+          ctx.globalAlpha = 1;
+          ctx.shadowBlur = 0;
+          // Move star
+          star.x += star.speed;
+          if (star.x > canvas.width) {
+            star.x = 0;
+            star.y = Math.random() * canvas.height;
+          }
+        }
+        requestAnimationFrame(() => animateStars(canvas, ctx));
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        const canvas = document.getElementById('star-bg');
+        const ctx = canvas.getContext('2d');
+        function setup() {
+          resizeCanvas(canvas);
+          createStars(canvas);
+        }
+        setup();
+        window.addEventListener('resize', setup);
+        animateStars(canvas, ctx);
+      });
+    </script>
+  </body>
+</html>
